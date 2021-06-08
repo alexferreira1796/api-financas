@@ -12,6 +12,7 @@ import data from './data';
 
 // Middleware
 import validUser from './middlewares/md-valid-user';
+import validEmailPassUser from './middlewares/md-valid-email-pass-user';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get("/", (req: Request, res: Response) => {
   `);
 });
 
+// GET all users
 app.get("/users/", (req: Request, res: Response) => {
   const users = data.map((item) => ({
     id: item.getId(),
@@ -45,6 +47,7 @@ app.get("/users/", (req: Request, res: Response) => {
   })
 });
 
+// Add new user
 app.post("/add/user", [validUser], (req: Request, res: Response) => {
   const {name, email, password}: IUser = req.body;
 
@@ -60,22 +63,28 @@ app.post("/add/user", [validUser], (req: Request, res: Response) => {
 
 });
 
-app.get("/user/:id", [validUser], (req: Request, res: Response) => {
-  const {id}: {id?: string} = req.params;
-
-  const hasUser = data.filter((item) => item.getId() === id);
-  if(!hasUser) {
-    return res.status(400).json({
-      success: false,
-      msg: 'User not found',
-      data: null
-    });
-  }
+// Login for email anda pass
+app.get("/user/:email/:password", [validUser, validEmailPassUser], (req: Request, res: Response) => {
+  const {email, password}: {email?: string, password?: string} = req.params;
+  const {data} = req.body;
 
   return res.status(201).json({
     success: true,
     msg: 'Use exists',
-    data: hasUser
+    data: data
+  });
+
+});
+
+// GET user for ID
+app.get("/user/:id", [validUser], (req: Request, res: Response) => {
+  const {id}: {id?: string} = req.params;
+  const {data} = req.body;
+
+  return res.status(201).json({
+    success: true,
+    msg: 'Use exists',
+    data: data
   });
 
 });

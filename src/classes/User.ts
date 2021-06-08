@@ -27,6 +27,10 @@ class User {
     return this.email;
   }
 
+  getPassword(): string {
+    return this.password;
+  }
+
 }
 
 export default User;

@@ -19,6 +19,14 @@ class User {
     return this.id;
   }
 
+  getName(): string {
+    return this.name;
+  }
+
+  getEmail(): string {
+    return this.email;
+  }
+
 }
 
 export default User;

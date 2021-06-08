@@ -10,6 +10,9 @@ import User from './classes/User';
 // Banco de dados
 import data from './data';
 
+// Middleware
+import validUser from './middlewares/md-valid-user';
+
 const app = express();
 
 app.use(cors());
@@ -29,7 +32,20 @@ app.get("/", (req: Request, res: Response) => {
   `);
 });
 
-app.post("/add/user", (req: Request, res: Response) => {
+app.get("/users/", (req: Request, res: Response) => {
+  const users = data.map((item) => ({
+    id: item.getId(),
+    name: item.getName(), 
+    email: item.getEmail()
+  }));
+  return res.status(200).json({
+    success: true,
+    msg: "Users list",
+    data: users
+  })
+});
+
+app.post("/add/user", [validUser], (req: Request, res: Response) => {
   const {name, email, password}: IUser = req.body;
 
   const newUser = new User(name, email, password);
@@ -44,7 +60,7 @@ app.post("/add/user", (req: Request, res: Response) => {
 
 });
 
-app.get("/user/:id", (req: Request, res: Response) => {
+app.get("/user/:id", [validUser], (req: Request, res: Response) => {
   const {id}: {id?: string} = req.params;
 
   const hasUser = data.filter((item) => item.getId() === id);

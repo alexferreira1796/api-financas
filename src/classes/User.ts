@@ -39,9 +39,14 @@ class User {
   setBalance() {
     const transaction = this.getTransaction();
     if(transaction) {
-      let sum = 0;
+      this.balance = 0;
+      let sum: number = 0;
       transaction.forEach(item => {
-        sum += item.getValue()
+        if(item.getDescription() === "despesa") {
+          sum -= Number(item.getValue());
+        } else {
+          sum += Number(item.getValue());
+        }
       });
       this.balance = this.balance + sum;
     }

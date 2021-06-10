@@ -18,7 +18,11 @@ class Transaction {
   }
 
   getValue(): number {
-    return this.value;
+    return +this.value;
+  }
+
+  getDescription(): string {
+    return this.description;
   }
 }
 

@@ -3,6 +3,7 @@ import cors from 'cors';
 
 // Interfaces
 import IUser from './interfaces/IUser';
+import ITransactions from './interfaces/ITransactions';
 
 // Classes
 import User from './classes/User';
@@ -65,7 +66,6 @@ app.post("/add/user", [validUser], (req: Request, res: Response) => {
 
 // Login for email anda pass
 app.get("/user/:email/:password", [validUser, validEmailPassUser], (req: Request, res: Response) => {
-  const {email, password}: {email?: string, password?: string} = req.params;
   const {data} = req.body;
 
   return res.status(201).json({
@@ -78,13 +78,66 @@ app.get("/user/:email/:password", [validUser, validEmailPassUser], (req: Request
 
 // GET user for ID
 app.get("/user/:id", [validUser], (req: Request, res: Response) => {
-  const {id}: {id?: string} = req.params;
   const {data} = req.body;
 
   return res.status(201).json({
     success: true,
     msg: 'Use exists',
     data: data
+  });
+
+});
+
+// POST Transaction
+app.post("/user/:id/transaction", [validUser], (req: Request, res: Response) => {
+  const {description, date, value}: ITransactions = req.body;
+  const {data} = req.body;
+
+  if(description && date && value) {
+
+    if(description !== 'despesa' && description !== 'receita' ) {
+      return res.status(400).json({
+        success: false,
+        msg: 'Description invalid',
+        data: null
+      });
+    }
+
+      const result = data[0].saveTransaction({description, date, value});
+
+      return res.status(200).json({
+        success: true,
+        msg: 'Transaction add with success',
+        data: result
+      })
+
+    } else {
+      return res.status(400).json({
+        success: false,
+        msg: 'Fail, fill all fields',
+        data: null
+      });
+    }
+});
+
+// DELETE Transaction
+app.delete("/user/:id/transaction/:idTransaction", [validUser], (req: Request, res: Response) => {
+  const {idTransaction}: {idTransaction?: string} = req.params;
+  const {data} = req.body;
+
+  const result = data[0].removeTransaction(idTransaction);
+  if(!result) {
+    return res.status(400).json({
+      success: false,
+      msg: 'Transaction not found',
+      data: null
+    })
+  }
+
+  return res.status(200).json({
+    success: true,
+    msg: 'Transaction delted with success',
+    data: result
   });
 
 });

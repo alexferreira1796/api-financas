@@ -16,6 +16,10 @@ class Transaction {
   getId(): string {
     return this.id;
   }
+
+  getValue(): number {
+    return this.value;
+  }
 }
 
 export default Transaction;

@@ -36,6 +36,17 @@ class User {
     return this.password;
   }
 
+  setBalance() {
+    const transaction = this.getTransaction();
+    if(transaction) {
+      let sum = 0;
+      transaction.forEach(item => {
+        sum += item.getValue()
+      });
+      this.balance = this.balance + sum;
+    }
+  }
+
   getTransaction(id?: string) {
     if(id) {
       const hasTransaction = this.transactions.filter((item) => item.getId() === id);
@@ -55,6 +66,7 @@ class User {
       if(all) {
         const hasTransaction = all.filter((item) => item.getId() !== id);
         this.transactions = hasTransaction || [];
+        this.setBalance();
         return this.transactions;
       } else {
         return false;
@@ -66,6 +78,7 @@ class User {
   saveTransaction(data: ITransactions): Transaction[]  {
     const newDate = new Transaction(data.description, data.date, data.value);
     this.transactions.push(newDate);
+    this.setBalance();
     return this.transactions;
   }
 
